@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'coin_data.dart';
 import 'dart:io' show Platform;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -10,6 +12,14 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
+
+  String exchangeRate;
+
+  @override
+  void initState() {
+    super.initState();
+    getExchangeRate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +42,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  '1 BTC = $exchangeRate USD',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -90,5 +100,16 @@ class _PriceScreenState extends State<PriceScreen> {
           value: currency,
         )));
     return items;
+  }
+
+  Future<void> getExchangeRate() async {
+    var url =
+        'https://rest.coinapi.io/v1/exchangerate/BTC/USD?apikey=79F242CD-E5C0-4D6B-9F1D-E593A2FDE954';
+    http.Response response = await http.get(url);
+
+    setState(() {
+      double exchangeRateDouble = jsonDecode(response.body)['rate'];
+      exchangeRate = exchangeRateDouble.toStringAsFixed(2);
+    });
   }
 }
