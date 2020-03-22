@@ -1,6 +1,6 @@
 import 'dart:io' show Platform;
 
-import 'package:bitcoin_ticker/networking.dart';
+import 'package:bitcoin_ticker/CryptoCurrencyModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,8 +12,9 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = 'USD';
+  CryptoCurrencyModel cryptoCurrencyModel = new CryptoCurrencyModel();
 
+  String selectedCurrency = 'USD';
   String exchangeRate;
 
   @override
@@ -103,20 +104,8 @@ class _PriceScreenState extends State<PriceScreen> {
     return items;
   }
 
-  Future<double> getExchangeRate() async {
-    String apikey = '79F242CD-E5C0-4D6B-9F1D-E593A2FDE954';
-    String cryptoCurrency = 'BTC';
-    String currency = 'USD';
-    var url =
-        'https://rest.coinapi.io/v1/exchangerate/$cryptoCurrency/$currency?apikey=$apikey';
-    NetworkHelper networkHelper = new NetworkHelper(url);
-    var exchangeData = await networkHelper.getData();
-
-    return exchangeData['rate'];
-  }
-
   Future<void> updateUI() async {
-    double exchangeRateDouble = await getExchangeRate();
+    double exchangeRateDouble = await cryptoCurrencyModel.getExchangeRate();
     setState(() {
       exchangeRate = exchangeRateDouble.toStringAsFixed(2);
     });
