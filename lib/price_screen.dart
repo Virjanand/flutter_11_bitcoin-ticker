@@ -20,7 +20,7 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    updateUI();
+    updateUI('BTC', selectedCurrency);
   }
 
   @override
@@ -104,8 +104,9 @@ class _PriceScreenState extends State<PriceScreen> {
     return items;
   }
 
-  Future<void> updateUI() async {
-    double exchangeRateDouble = await cryptoCurrencyModel.getExchangeRate();
+  Future<void> updateUI(String cryptoCurrency, String currency) async {
+    double exchangeRateDouble = await cryptoCurrencyModel
+        .getExchangeRateFromCryptoTo(cryptoCurrency, currency);
     setState(() {
       exchangeRate = exchangeRateDouble.toStringAsFixed(2);
     });

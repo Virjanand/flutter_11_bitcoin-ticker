@@ -1,8 +1,10 @@
 import 'networking.dart';
 
 class CryptoCurrencyModel {
-  Future<double> getExchangeRate() async {
-    final String apikey = '79F242CD-E5C0-4D6B-9F1D-E593A2FDE954';
+  static const String apikey = '79F242CD-E5C0-4D6B-9F1D-E593A2FDE954';
+
+  Future<double> getExchangeRateFromCryptoTo(
+      String cryptoCurrency, String currency) async {
     String cryptoCurrency = 'BTC';
     String currency = 'USD';
     var url =
