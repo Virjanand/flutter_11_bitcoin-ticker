@@ -20,7 +20,18 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    updateUI('BTC', selectedCurrency);
+    cryptoCurrencyModel
+        .getExchangeRateFromCryptoTo('BTC', selectedCurrency)
+        .then((double exchangeRate) {
+      updateUI(selectedCurrency, exchangeRate);
+    });
+  }
+
+  Future<void> updateUI(String currency, double exchangeRate) async {
+    setState(() {
+      selectedCurrency = currency;
+      this.exchangeRate = exchangeRate.toStringAsFixed(2);
+    });
   }
 
   @override
@@ -44,7 +55,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = $exchangeRate USD',
+                  '1 BTC = $exchangeRate $selectedCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -59,7 +70,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: Platform.isIOS ? cupertinoPicker() : androidDropdown(),
+            child: !Platform.isIOS ? cupertinoPicker() : androidDropdown(),
           ),
         ],
       ),
@@ -68,10 +79,15 @@ class _PriceScreenState extends State<PriceScreen> {
 
   CupertinoPicker cupertinoPicker() {
     return CupertinoPicker(
+      scrollController: FixedExtentScrollController(
+          initialItem: currenciesList.indexOf(selectedCurrency)),
       backgroundColor: Colors.lightBlue,
       itemExtent: 32.0,
-      onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+      onSelectedItemChanged: (selectedIndex) async {
+        String currency = currenciesList[selectedIndex];
+        double exchangeRate = await cryptoCurrencyModel
+            .getExchangeRateFromCryptoTo('BTC', currency);
+        updateUI(currency, exchangeRate);
       },
       children: getCurrencyTexts(),
     );
@@ -87,10 +103,10 @@ class _PriceScreenState extends State<PriceScreen> {
     return DropdownButton(
       value: selectedCurrency,
       items: dropdownMenuItemsForCurrencies(),
-      onChanged: (value) {
-        setState(() {
-          selectedCurrency = value;
-        });
+      onChanged: (currency) async {
+        double exchangeRate = await cryptoCurrencyModel
+            .getExchangeRateFromCryptoTo('BTC', currency);
+        updateUI(currency, exchangeRate);
       },
     );
   }
@@ -102,13 +118,5 @@ class _PriceScreenState extends State<PriceScreen> {
           value: currency,
         )));
     return items;
-  }
-
-  Future<void> updateUI(String cryptoCurrency, String currency) async {
-    double exchangeRateDouble = await cryptoCurrencyModel
-        .getExchangeRateFromCryptoTo(cryptoCurrency, currency);
-    setState(() {
-      exchangeRate = exchangeRateDouble.toStringAsFixed(2);
-    });
   }
 }
