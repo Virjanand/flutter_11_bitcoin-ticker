@@ -15,7 +15,6 @@ class _PriceScreenState extends State<PriceScreen> {
   CryptoCurrencyModel cryptoCurrencyModel = new CryptoCurrencyModel();
 
   String selectedCurrency = 'USD';
-  String exchangeRate;
   Map<String, String> exchangeRates = new Map();
 
   @override
@@ -24,15 +23,20 @@ class _PriceScreenState extends State<PriceScreen> {
     cryptoCurrencyModel
         .getExchangeRateFromCryptoTo('BTC', selectedCurrency)
         .then((double exchangeRate) {
-      updateUI(selectedCurrency, exchangeRate);
+      exchangeRates['BTC'] = exchangeRate.toStringAsFixed(2);
+      updateUI(selectedCurrency);
+    });
+    cryptoCurrencyModel
+        .getExchangeRateFromCryptoTo('ETH', selectedCurrency)
+        .then((double exchangeRate) {
+      exchangeRates['ETH'] = exchangeRate.toStringAsFixed(2);
+      updateUI(selectedCurrency);
     });
   }
 
-  Future<void> updateUI(String currency, double exchangeRate) async {
+  Future<void> updateUI(String currency) async {
     setState(() {
       selectedCurrency = currency;
-      this.exchangeRate = exchangeRate.toStringAsFixed(2);
-      exchangeRates['BTC'] = exchangeRate.toStringAsFixed(2);
     });
   }
 
@@ -48,30 +52,7 @@ class _PriceScreenState extends State<PriceScreen> {
         children: <Widget>[
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-                child: Card(
-                  color: Colors.lightBlueAccent,
-                  elevation: 5.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                    child: Text(
-                      '1 BTC = ${exchangeRates["BTC"]} $selectedCurrency',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            children: createExchangeRateCards(),
           ),
           Container(
             height: 150.0,
@@ -83,6 +64,55 @@ class _PriceScreenState extends State<PriceScreen> {
         ],
       ),
     );
+  }
+
+  List<Widget> createExchangeRateCards() {
+    return <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+              child: Card(
+                color: Colors.lightBlueAccent,
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                  child: Text(
+                    '1 BTC = ${exchangeRates["BTC"]} $selectedCurrency',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+              child: Card(
+                color: Colors.lightBlueAccent,
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                  child: Text(
+                    '1 ETH = ${exchangeRates["ETH"]} $selectedCurrency',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ];
   }
 
   CupertinoPicker cupertinoPicker() {
@@ -127,6 +157,10 @@ class _PriceScreenState extends State<PriceScreen> {
   Future changeCurrency(String currency) async {
     double exchangeRate =
         await cryptoCurrencyModel.getExchangeRateFromCryptoTo('BTC', currency);
-    updateUI(currency, exchangeRate);
+    exchangeRates['BTC'] = exchangeRate.toStringAsFixed(2);
+    exchangeRate =
+        await cryptoCurrencyModel.getExchangeRateFromCryptoTo('ETH', currency);
+    exchangeRates['ETH'] = exchangeRate.toStringAsFixed(2);
+    updateUI(currency);
   }
 }
