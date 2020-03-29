@@ -20,18 +20,14 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    cryptoCurrencyModel
-        .getExchangeRateFromCryptoTo('BTC', selectedCurrency)
-        .then((double exchangeRate) {
-      exchangeRates['BTC'] = exchangeRate.toStringAsFixed(2);
-      updateUI(selectedCurrency);
-    });
-    cryptoCurrencyModel
-        .getExchangeRateFromCryptoTo('ETH', selectedCurrency)
-        .then((double exchangeRate) {
-      exchangeRates['ETH'] = exchangeRate.toStringAsFixed(2);
-      updateUI(selectedCurrency);
-    });
+    for (String crypto in cryptoList) {
+      cryptoCurrencyModel
+          .getExchangeRateFromCryptoTo(crypto, selectedCurrency)
+          .then((double exchangeRate) {
+        exchangeRates[crypto] = exchangeRate.toStringAsFixed(2);
+        updateUI(selectedCurrency);
+      });
+    }
   }
 
   Future<void> updateUI(String currency) async {
@@ -68,7 +64,7 @@ class _PriceScreenState extends State<PriceScreen> {
 
   List<Widget> createExchangeRateCards() {
     List<Widget> cryptoCards = new List();
-    for (String cryptoCurrency in cryptoList) {
+    for (String cryptoCurrency in exchangeRates.keys) {
       cryptoCards.add(
         Padding(
           padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
