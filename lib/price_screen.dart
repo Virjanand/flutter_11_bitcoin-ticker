@@ -64,7 +64,9 @@ class _PriceScreenState extends State<PriceScreen> {
 
   List<Widget> createExchangeRateCards() {
     List<Widget> cryptoCards = new List();
-    for (String cryptoCurrency in exchangeRates.keys) {
+    var cryptos = exchangeRates.keys.toList();
+    cryptos.sort();
+    for (String cryptoCurrency in cryptos) {
       cryptoCards.add(
         Padding(
           padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
