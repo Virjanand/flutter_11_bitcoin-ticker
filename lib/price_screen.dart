@@ -132,12 +132,11 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 
   Future changeCurrency(String currency) async {
-    double exchangeRate =
-        await cryptoCurrencyModel.getExchangeRateFromCryptoTo('BTC', currency);
-    exchangeRates['BTC'] = exchangeRate.toStringAsFixed(2);
-    exchangeRate =
-        await cryptoCurrencyModel.getExchangeRateFromCryptoTo('ETH', currency);
-    exchangeRates['ETH'] = exchangeRate.toStringAsFixed(2);
+    for (String crypto in exchangeRates.keys) {
+      double exchangeRate = await cryptoCurrencyModel
+          .getExchangeRateFromCryptoTo(crypto, currency);
+      exchangeRates[crypto] = exchangeRate.toStringAsFixed(2);
+    }
     updateUI(currency);
   }
 }
