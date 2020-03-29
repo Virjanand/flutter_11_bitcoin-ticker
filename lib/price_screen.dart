@@ -67,52 +67,33 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 
   List<Widget> createExchangeRateCards() {
-    return <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-              child: Card(
-                color: Colors.lightBlueAccent,
-                elevation: 5.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                  child: Text(
-                    '1 BTC = ${exchangeRates["BTC"]} $selectedCurrency',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                    ),
-                  ),
+    List<Widget> cryptoCards = new List();
+    for (String cryptoCurrency in cryptoList) {
+      cryptoCards.add(
+        Padding(
+          padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+          child: Card(
+            color: Colors.lightBlueAccent,
+            elevation: 5.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+              child: Text(
+                '1 $cryptoCurrency = ${exchangeRates[cryptoCurrency]} $selectedCurrency',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.white,
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-              child: Card(
-                color: Colors.lightBlueAccent,
-                elevation: 5.0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                  child: Text(
-                    '1 ETH = ${exchangeRates["ETH"]} $selectedCurrency',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ];
+          ),
+        ),
+      );
+    }
+    return cryptoCards;
   }
 
   CupertinoPicker cupertinoPicker() {
